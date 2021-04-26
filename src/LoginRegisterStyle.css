@@ -1,0 +1,47 @@
+@import "MainStyle.css";
+
+main{
+	display: grid;
+	text-align: center;
+	margin-top: 20px;
+}
+
+form p{
+	margin-bottom: 2px;
+	margin-top: 15px;
+	font-size: 24px;
+}
+form button{
+	margin-top: 15px;
+	background-color: #9c9732; /* Green */
+  	border: none;
+  	color: white;
+  	padding: 15px 32px;
+  	text-align: center;
+  	text-decoration: none;
+  	display: inline-block;
+  	font-size: 16px;
+}
+form input {
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  font: 400 14px Arial;
+  box-sizing: border-box;
+}
+#OrganisationRegister{
+  text-align:center;
+  width: 100%;
+  
+}
+#OrganisationRegister div{
+  display:inline-block;
+  
+}
+#OrganisationRegister input{
+  display:inline-block;
+  width:20px;/*Размер вашей кнопки или чекбокса*/
+  height:20px;
+  margin:0px 0px 5px 10px;
+  vertical-align:middle;
+}
