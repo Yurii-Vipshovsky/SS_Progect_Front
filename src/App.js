@@ -15,7 +15,10 @@ export default function App() {
     <Router>
         <header>
           <div class="Login">
-            <Link id="Login" to="/login">Вхід</Link>
+            <div id="Login">
+              <Link to="/login">Вхід<br/></Link>
+              <Link to="/userpage">Особистий кабінет</Link>
+            </div>
             <div id="Register">
               <Link to="/regiser">Реєстрація<br/></Link>
               <Link to="/NewEvent">Реєстрація Події</Link>
@@ -29,6 +32,9 @@ export default function App() {
         <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/userpage">
+            <UserPage />
           </Route>
           <Route path="/regiser">
             <Register />
@@ -50,6 +56,64 @@ export default function App() {
 }
 
 class HomeComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null,
+      url: "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail",
+      isLoaded: false,
+      items: []
+    };
+  }
+
+  addParam(){}
+
+  componentDidMount() {   
+    
+    fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail')
+    .then(res => res.json())
+    .then(
+      (result)=>{
+          this.setState({
+            isLoaded : true,
+            items : result.drinks
+          });
+      },
+      (error)=>{
+        this.setState({
+          isLoaded: true,
+          error
+        });
+      }
+      )        
+  }
+
+  render() {
+    const { error, isLoaded, items} = this.state;
+    if (error) {
+      return <div>Помилка: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Завантаження...</div>;
+    } else {
+      return (
+        <ul>
+          {items.map(item => (
+            <div class='showElem'>
+              <li  key={item.name}>
+                {item.name} <br/>
+                {item.place} <br/>
+                {item.description} <br/>
+                {item.type}
+              </li>
+            </div>
+          ))}
+        </ul>
+      );
+    }
+  }
+}
+
+class UserPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -100,6 +164,7 @@ class HomeComponent extends React.Component {
   }
 }
 
+
 function NewEvent(){
   return(
     <main>
@@ -107,7 +172,20 @@ function NewEvent(){
         <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
         <div>
           <p>Назва Події</p>
-          <input type="text" name="EventName" placeholder="Назва Події" required/>
+          <input type="text" name="name" placeholder="Назва Події" required/>
+        </div>
+        
+        <div>
+          <p>Дата Події</p>
+          <input type="datetime-local" name="CarryingOutTime" placeholder="Дата Події"/>
+        </div>
+        <div>
+          <p>Адреса</p>
+          <input type="text" name="place" placeholder="Адреса"/>
+        </div>
+        <div>
+          <p>Додаткова Інформація</p>
+         <textarea name="description;" placeholder="Додаткова Інформація"/>
         </div>
         <div>
           <p>Тип Волонтерства</p>
@@ -134,19 +212,6 @@ function NewEvent(){
 
           </select>
         </div>
-        <div>
-          <p>Дата Події</p>
-          <input type="datetime-local" name="CarryingOutTime" placeholder="Дата Події"/>
-        </div>
-        <div>
-          <p>Адреса</p>
-          <input type="text" name="Location" placeholder="Адреса"/>
-        </div>
-        <div>
-          <p>Додаткова Інформація</p>
-         <textarea name="AdditionalInfo;" placeholder="Додаткова Інформація"/>
-        </div>
-    
 
     <button type="submit" value="Зареєструвати" 
       formaction="handler.php" formmethod="post">Зареєструвати</button>
@@ -155,7 +220,6 @@ function NewEvent(){
 }
 
 function Home() {
-   
   return (
     <div class='home'>
       <form method="post" action="input5.php">
@@ -172,6 +236,7 @@ function Home() {
         <input class ='VolonterType' type="checkbox" name="option10" value="a10" onClick={()=>HomeComponent.addParam('med')}/>Лікарняне</p>
         <p><input class ='VolonterTypeSubmit' type="submit" value="Вибрати" onClick={()=>HomeComponent.handeleClick()}/></p>
       </form>
+      < HomeComponent/>
     </div>
   );
 }
@@ -182,8 +247,8 @@ function Login() {
     <form>
       <p styles={{fontSize: '40px'}}>Вхід</p>
       <div>
-        <p>Login</p>
-        <input type="text" name="Login"/>
+        <p>Email</p>
+        <input type="email" name="email"/>
       </div>
       <div>
         <p>Password</p>
@@ -226,16 +291,20 @@ class Component extends React.Component {
       <form>
         <p styles={{fontSize: '40px'}}>Реєстрація</p>
         <div>
+          <p>Nick name</p>
+          <input type="text" name="nickName" placeholder="nickName" required/>
+        </div>
+        <div>
           <p>Email</p>
-          <input type="email" name="Email" placeholder="Email" required/>
+          <input type="email" name="email" placeholder="Email" required/>
         </div>
         <div>
           <p>Ім'я</p>
-          <input type="text" name="name" placeholder="Ім'я" required/>
+          <input type="text" name="fullName" placeholder="Ім'я" required/>
         </div>
         <div>
           <p>День Народження</p>
-          <input type="date" name="Birthday" placeholder="День Народження"/>
+          <input type="date" name="birthday" placeholder="День Народження"/>
         </div>
         <div>
           <p>Місто</p>
@@ -247,7 +316,7 @@ class Component extends React.Component {
         </div>
         <div>
           <p>Пароль</p>
-          <input type="password" name="Password" placeholder="Пароль" required/>
+          <input type="password" name="password" placeholder="Пароль" required/>
         </div>
     <div id = "OrganisationRegister">
       <div>

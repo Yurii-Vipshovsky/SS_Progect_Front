@@ -15,3 +15,19 @@
   	border: none;
   	color: white;
 }
+img {
+	border: 1px solid #F0F0D8;
+	border-radius: 4px;
+	padding: 5px;
+	width: 150px;
+}
+.showElem li{
+	list-style-type: none; /* Убираем маркеры */
+}
+.showElem{
+	align-items: center;
+	border : 1px solid #F0F0D8; 
+	border-radius: 4px;
+	background-color: #9c9732;
+	margin : 10px;
+}
