@@ -70,13 +70,13 @@ class HomeComponent extends React.Component {
 
   componentDidMount() {   
     
-    fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail')
+    fetch('https://127.0.0.1:5001/api/Event?order=asc')
     .then(res => res.json())
     .then(
       (result)=>{
           this.setState({
             isLoaded : true,
-            items : result.drinks
+            items : result.data
           });
       },
       (error)=>{
@@ -100,7 +100,7 @@ class HomeComponent extends React.Component {
           {items.map(item => (
             <div class='showElem'>
               <li  key={item.name}>
-                {item.name} <br/>
+                {item.date} <br/>
                 {item.place} <br/>
                 {item.description} <br/>
                 {item.type}
@@ -214,7 +214,7 @@ function NewEvent(){
         </div>
 
     <button type="submit" value="Зареєструвати" 
-      formaction="handler.php" formmethod="post">Зареєструвати</button>
+      formaction="https://localhost:5001/api/Event" formmethod="post">Зареєструвати</button>
     </form>
     </main>);
 }
@@ -255,7 +255,7 @@ function Login() {
         <input type="password" name="Password"/>
       </div>
       <button type="submit" value="Увійти" 
-      formaction="handler.php" formmethod="post">Увійти</button>
+      formaction="https://localhost:5001/api/User/login" formmethod="post">Увійти</button>
     </form>
   </main>);
 }
@@ -330,17 +330,8 @@ class Component extends React.Component {
     { content }
 
     <button type="submit" value="Зареєструватись" 
-      formaction="handler.php" formmethod="post">Зареєструватись</button>
+      formaction="https://localhost:5001/api/User/register" formmethod="post">Зареєструватись</button>
     </form>
-    {/*email edailData not null,
-    name varchar(50) nut null,
-    birthday date,
-    city varchar(20),
-    password varchar(50) not null,--mb hash
-    phoneNumber phoneNumberData,
-    isOrganization bool not null,
-    site varchar(50),
-    acceptedEvents int[],<div id="like_button_container"></div>*/}
 
     </main></>;
   }
