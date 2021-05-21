@@ -88,29 +88,30 @@ class HomeComponent extends React.Component {
       )        
   }
 
-  render() {
-    const { error, isLoaded, items} = this.state;
-    if (error) {
-      return <div>Помилка: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Завантаження...</div>;
-    } else {
-      return (
-        <ul>
-          {items.map(item => (
-            <div class='showElem'>
-              <li  key={item.name}>
-                {item.date} <br/>
-                {item.place} <br/>
-                {item.description} <br/>
-                {item.type}
-              </li>
-            </div>
-          ))}
-        </ul>
-      );
+    render() {
+        const { error, isLoaded, items} = this.state;
+        if (error) {
+            return <div>Помилка: {error.message}</div>;
+        } else if (!isLoaded) {
+            return <div>Завантаження...</div>;
+        } else {
+            return (
+                <ul>
+                    {items.map(item => (
+                        <div class='showElem'>
+                            <li  key={item.name}>
+                                <p>Назва події </p>{item.name} <br/>
+                                <p>Дата проведення події </p>{item.date} <br/>
+                                <p>Місце проведення події </p>{item.place} <br/>
+                                <p>Опис події </p>{item.description} <br/>
+                                <p>Тип волонтерства </p>{item.type}
+                            </li>
+                        </div>
+                    ))}
+                </ul>
+            );
+        }
     }
-  }
 }
 
 class UserPage extends React.Component {
@@ -164,73 +165,91 @@ class UserPage extends React.Component {
   }
 }
 
+class NewEvent extends React.Component {
+    constructor() {
+        super();
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
 
-function NewEvent(){
-  return(
-    <main>
-      <form>
-        <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
-        <div>
-          <p>Назва Події</p>
-          <input type="text" name="name" placeholder="Назва Події" required/>
-        </div>
-        
-        <div>
-          <p>Дата Події</p>
-          <input type="datetime-local" name="CarryingOutTime" placeholder="Дата Події"/>
-        </div>
-        <div>
-          <p>Адреса</p>
-          <input type="text" name="place" placeholder="Адреса"/>
-        </div>
-        <div>
-          <p>Додаткова Інформація</p>
-         <textarea name="description;" placeholder="Додаткова Інформація"/>
-        </div>
-        <div>
-          <p>Тип Волонтерства</p>
-          <select id="TypeOfVolunteer">
-          <option value="zoo">Зоо волонтерство</option>
+    handleSubmit(event) {
+        event.preventDefault();
+        const data = new FormData(event.target);
 
-          <option value="eco">Еко волонтерство</option>
+        fetch('https://127.0.0.1:5001/api/Event', {
+            method: 'POST',
+            body: data,
+        });
+    }
 
-          <option value="tele">Телофонне волонтерство</option>
+    render() {
+        return(
+            <main>
+                <form onSubmit={this.handleSubmit}>
+                    <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
+                    <div>
+                        <p>Назва Події</p>
+                        <input type="text" name="name"
+                               placeholder="Назва Події" required/>
+                    </div>
 
-          <option value='inte'>Інтелектуальне волонтерство</option>
+                    <div>
+                        <p>Дата Події</p>
+                        <input type="datetime-local"  name="CarryingOutTime" placeholder="Дата Події"/>
+                    </div>
+                    <div>
+                        <p>Адреса</p>
+                        <input type="text" name="Place"placeholder="Адреса"/>
+                    </div>
+                    <div>
+                        <p>Додаткова Інформація</p>
+                        <textarea
+                            name="Description" placeholder="Додаткова Інформація"/>
+                    </div>
+                    <div>
+                        <p>Тип Волонтерства</p>
+                        <select id="TypeOfVolunteer"
+                                name="Type">
+                            <option value='1'>Зоо волонтерство</option>
 
-          <option value='poor'>Допомога ніщим</option>
+                            <option value='2'>Еко волонтерство</option>
 
-          <option value='scho'>Шкільне волонтерство</option>
+                            <option value='3'>Телофонне волонтерство</option>
 
-          <option value='home'>Допомога бомжам</option>
+                            <option value='4'>Інтелектуальне волонтерство</option>
 
-          <option value='inc'>Інклюзивне волонтерство</option>
+                            <option value='5'>Допомога бідним</option>
 
-          <option value="cult">Культурне волонтерство</option>
+                            <option value='6'>Шкільне волонтерство</option>
 
-          <option value='med'>Медицинське волонтерство</option>
+                            <option value='7'>Допомога бездомним</option>
 
-          </select>
-        </div>
+                            <option value='8'>Інклюзивне волонтерство</option>
 
-    <button type="submit" value="Зареєструвати" 
-      formaction="https://localhost:5001/api/Event" formmethod="post">Зареєструвати</button>
-    </form>
-    </main>);
+                            <option value='9'>Культурне волонтерство</option>
+
+                            <option value='10'>Медицинське волонтерство</option>
+
+                        </select>
+                    </div>
+
+                    <button>Зареєструвати</button>
+                </form>
+            </main>);
+    }
 }
 
 function Home() {
   return (
     <div class='home'>
-      <form method="post" action="input5.php">
+      <form method="GET" action="input5.php">
         <p><b>Види волонтерства</b></p>
         <p><input class ='VolonterType' type="checkbox" name="option1" value="a1" onClick={()=>HomeComponent.addParam('zoo')}/>Зоо<br />
         <input class ='VolonterType' type="checkbox" name="option2" value="a2" onClick={()=>HomeComponent.addParam('eco')}/>Еко<br />
         <input class ='VolonterType' type="checkbox" name="option3" value="a3" onClick={()=>HomeComponent.addParam('tele')}/>Телефонне<br /> 
         <input class ='VolonterType' type="checkbox" name="option4" value="a4" onClick={()=>HomeComponent.addParam('inte')}/>Інтелектуальне<br/> 
         <input class ='VolonterType' type="checkbox" name="option5" value="a5" onClick={()=>HomeComponent.addParam('scho')}/>Шкільне<br/> 
-        <input class ='VolonterType' type="checkbox" name="option6" value="a6" onClick={()=>HomeComponent.addParam('home')}/>Допомога бомжам<br/>
-        <input class ='VolonterType' type="checkbox" name="option7" value="a7" onClick={()=>HomeComponent.addParam('poor')}/>Допомога ніщим<br/>
+        <input class ='VolonterType' type="checkbox" name="option6" value="a6" onClick={()=>HomeComponent.addParam('home')}/>Допомога бездомним<br/>
+        <input class ='VolonterType' type="checkbox" name="option7" value="a7" onClick={()=>HomeComponent.addParam('poor')}/>Допомога бідним<br/>
         <input class ='VolonterType' type="checkbox" name="option8" value="a8" onClick={()=>HomeComponent.addParam('inc')}/>Інклюзивне<br/> 
         <input class ='VolonterType' type="checkbox" name="option9" value="a9" onClick={()=>HomeComponent.addParam('cult')}/>Культурне<br/> 
         <input class ='VolonterType' type="checkbox" name="option10" value="a10" onClick={()=>HomeComponent.addParam('med')}/>Лікарняне</p>
@@ -255,7 +274,7 @@ function Login() {
         <input type="password" name="Password"/>
       </div>
       <button type="submit" value="Увійти" 
-      formaction="https://localhost:5001/api/User/login" formmethod="post">Увійти</button>
+      formaction="https://127.0.0.1:5001/api/User/login" formmethod="post">Увійти</button>
     </form>
   </main>);
 }
@@ -330,7 +349,7 @@ class Component extends React.Component {
     { content }
 
     <button type="submit" value="Зареєструватись" 
-      formaction="https://localhost:5001/api/User/register" formmethod="post">Зареєструватись</button>
+      formaction="https://127.0.0.1:5001/api/User/register" formmethod="post">Зареєструватись</button>
     </form>
 
     </main></>;
