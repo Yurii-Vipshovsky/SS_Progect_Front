@@ -174,10 +174,20 @@ class NewEvent extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const data = new FormData(event.target);
+        const json = {};
+        Array.from(data.entries()).forEach(([key, value]) => {
+            if (key == 'Type')
+                json[key] = parseInt(value);
+            else
+                json[key] = value;
+        });
 
         fetch('https://127.0.0.1:5001/api/Event', {
             method: 'POST',
-            body: data,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(json),
         });
     }
 
@@ -188,17 +198,17 @@ class NewEvent extends React.Component {
                     <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
                     <div>
                         <p>Назва Події</p>
-                        <input type="text" name="name"
+                        <input type="text" name="Name"
                                placeholder="Назва Події" required/>
                     </div>
 
                     <div>
                         <p>Дата Події</p>
-                        <input type="datetime-local"  name="CarryingOutTime" placeholder="Дата Події"/>
+                        <input type="datetime-local" name="CarryingOutTime" placeholder="Дата Події"/>
                     </div>
                     <div>
                         <p>Адреса</p>
-                        <input type="text" name="Place"placeholder="Адреса"/>
+                        <input type="text" name="Place" placeholder="Адреса"/>
                     </div>
                     <div>
                         <p>Додаткова Інформація</p>
