@@ -3,25 +3,27 @@ import './HomeStyle.css';
 import './App.scss';
 import history from './history';
 import Pagination from './Pagination'
-import Event from './Event'
+import EventItem from './Event'
 import React from "react";
 import {BrowserRouter as Router, Link, Route, Switch,} from "react-router-dom";
+import config from './config'
+
 
 export default function App() {
     return (
         <Router>
             <header>
-                <div class="Login">
+                <div className="Login">
                     <div id="Login">
-                        <Link to="/login">Вхід<br/></Link>
-                        <Link to="/userpage">Особистий кабінет</Link>
+                        <Link to="/login"><h4>Вхід</h4></Link>
+                        <Link to="/userpage"><h4>Особистий кабінет</h4></Link>
                     </div>
                     <div id="Register">
-                        <Link to="/regiser">Реєстрація<br/></Link>
-                        <Link to="/NewEvent">Реєстрація Події</Link>
+                        <Link to="/regiser"><h4>Реєстрація</h4></Link>
+                        <Link to="/NewEvent"><h4>Реєстрація Події</h4></Link>
                     </div>
                 </div>
-                <Link to="/"><h1 class="title" >Твори Добро Бро!</h1></Link>
+                <Link to="/"><h1 className="title" >Твори Добро Бро!</h1></Link>
             </header>
 
             <Switch>
@@ -56,17 +58,15 @@ class HomeComponent extends React.Component {
             error: null,
             isLoaded: false,
             totalRecords: 0,
-            url: "https://127.0.0.1:5001/api/Event?order=asc",
+            url: `${config.api}/api/Event?order=asc`,
             data: [],
             currentPage: 1,
             totalPages: 1
         };
     }
 
-    addParam(){}
-
     componentDidMount() {
-        fetch('https://127.0.0.1:5001/api/Event?order=asc')
+        fetch(`${config.api}/api/Event?order=asc`)
             .then(res => res.json())
             .then(
                 (result)=>{
@@ -88,47 +88,63 @@ class HomeComponent extends React.Component {
     }
     onPageChanged = data => {
         const { currentPage, totalPages, pageLimit } = data;
-        fetch(`https://127.0.0.1:5001/api/Event?PageNumber=${currentPage}&PageSize=${pageLimit}&order=asc`)
-            .then(response => {
-                const currentEvents = response.data;
-                this.setState({ totalPages, currentPage, currentEvents });
-                console.log(currentEvents)
-            });
-
+        fetch(`${config.api}/api/Event?PageNumber=${currentPage}&PageSize=${pageLimit}&order=asc`)
+            .then(response => response.json())
+            .then(
+                (result)=>{
+                    const data = result.data;
+                    this.setState({ currentPage, totalPages, data });
+                });
     }
 
     render() {
         const { error, isLoaded, totalRecords, data, currentPage, totalPages } = this.state;
-        const headerClass = ['text-dark py-2 pr-4 m-0', currentPage ? 'border-gray border-right' : ''].join(' ').trim();
+        const headerclassName = ['text-dark py-2 pr-4 m-0', currentPage ? 'border-gray border-right' : ''].join(' ').trim();
 
-        if (error) {
+        if (error)
             return <div>Помилка: {error.message}</div>;
-        } else if (!isLoaded) {
+        else if (!isLoaded)
             return <div>Завантаження...</div>;
-        } else {
+        else
             return (
                 <div className="container mb">
                     <div className="row d-flex flex-row py-1">
                         <div className="w-100 px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
                             <div className="d-flex flex-row align-items-center">
-                                <h2 className={headerClass}>
+                                <h2 className={headerclassName}>
                                     <strong className="text-secondary">{totalRecords}</strong> Events
                                 </h2>
-                                { currentPage && (
-                                    <span className="current-page d-inline-block h-100 pl-4 text-secondary">
-                                        Page <span className="font-weight-bold">{ currentPage }</span> / <span className="font-weight-bold">{ totalPages }</span>
-                                    </span>
-                                ) }
-                                <div className="ml-4 d-flex flex-row py-4 align-items-center">
-                                    <Pagination totalRecords={totalRecords} pageLimit={10} pageNeighbours={1} onPageChanged={this.onPageChanged} />
-                                </div>
                             </div>
-                            {data.map(item => <Event key={item.name} eventInfo={item} />) }
+                            <table className="table table-hover table-dark">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Description</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Place</th>
+                                        <th scope="col">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.map(item => (
+                                        <tr>
+                                            <th scope="row">{item.name}</th>
+                                            <td>{item.description}</td>
+                                            <td>{item.date}</td>
+                                            <td>{item.place}</td>
+                                            <td>{item.type}</td>
+                                        </tr>
+                                    ) )}
+
+                                </tbody>
+                            </table>
+                            <div className="ml-4 d-flex flex-row py-4 align-items-center">
+                                <Pagination totalRecords={totalRecords} pageLimit={10} pageNeighbours={1} onPageChanged={this.onPageChanged} />
+                            </div>
                         </div>
                     </div>
                 </div>
             );
-        }
     }
 }
 
@@ -137,21 +153,25 @@ class UserPage extends React.Component {
         super(props);
         this.state = {
             error: null,
-            url: "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail",
+            url: `${config.api}/api/User`,
             isLoaded: false,
-            items: []
+            item: null
         };
     }
 
     componentDidMount() {
 
-        fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail')
+        fetch(`${config.api}/api/User`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
             .then(res => res.json())
             .then(
                 (result)=>{
                     this.setState({
                         isLoaded : true,
-                        items : result.drinks
+                        item : result.data
                     });
                 },
                 (error)=>{
@@ -164,20 +184,23 @@ class UserPage extends React.Component {
     }
 
     render() {
-        const { error, isLoaded, items } = this.state;
+        const { error, isLoaded, item } = this.state;
         if (error) {
             return <div>Помилка: {error.message}, {history.getAll}</div>;
         } else if (!isLoaded) {
             return <div>Завантаження...</div>;
         } else {
             return (
-                <ul>
-                    {items.map(item => (
-                        <li key={item.name}>
-                            {item.strDrink} {item.strDrinkThumb}
-                        </li>
-                    ))}
-                </ul>
+                <div key={item.id}>
+                    <div>
+                        <div>{item.login}</div>
+                        <div>{item.email}</div>
+                        <div>{item.name}</div>
+                        <div>{item.birthday}</div>
+                        <div>{item.sity}</div>
+                        <div>{item.phoneNumber}</div>
+                    </div>
+                </div>
             );
         }
     }
@@ -200,10 +223,11 @@ class NewEvent extends React.Component {
                 json[key] = value;
         });
 
-        fetch('https://127.0.0.1:5001/api/Event', {
+        fetch(`${config.api}/api/Event`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(json),
         });
@@ -216,8 +240,7 @@ class NewEvent extends React.Component {
                     <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
                     <div>
                         <p>Назва Події</p>
-                        <input type="text" name="Name"
-                               placeholder="Назва Події" required/>
+                        <input type="text" name="Name" placeholder="Назва Події" required/>
                     </div>
 
                     <div>
@@ -230,36 +253,23 @@ class NewEvent extends React.Component {
                     </div>
                     <div>
                         <p>Додаткова Інформація</p>
-                        <textarea
-                            name="Description" placeholder="Додаткова Інформація"/>
+                        <textarea name="Description" placeholder="Додаткова Інформація"/>
                     </div>
                     <div>
                         <p>Тип Волонтерства</p>
-                        <select id="TypeOfVolunteer"
-                                name="Type">
+                        <select id="TypeOfVolunteer" name="Type">
                             <option value='1'>Зоо волонтерство</option>
-
                             <option value='2'>Еко волонтерство</option>
-
                             <option value='3'>Телофонне волонтерство</option>
-
                             <option value='4'>Інтелектуальне волонтерство</option>
-
                             <option value='5'>Допомога бідним</option>
-
                             <option value='6'>Шкільне волонтерство</option>
-
                             <option value='7'>Допомога бездомним</option>
-
                             <option value='8'>Інклюзивне волонтерство</option>
-
                             <option value='9'>Культурне волонтерство</option>
-
                             <option value='10'>Медицинське волонтерство</option>
-
                         </select>
                     </div>
-
                     <button>Зареєструвати</button>
                 </form>
             </main>);
@@ -268,20 +278,26 @@ class NewEvent extends React.Component {
 
 function Home() {
     return (
-        <div class='home'>
+        <div className='home'>
             <form method="GET" action="input5.php">
-                <p><b>Види волонтерства</b></p>
-                <p><input class ='VolonterType' type="checkbox" name="option1" value="a1" onClick={()=>HomeComponent.addParam('zoo')}/>Зоо<br />
-                    <input class ='VolonterType' type="checkbox" name="option2" value="a2" onClick={()=>HomeComponent.addParam('eco')}/>Еко<br />
-                    <input class ='VolonterType' type="checkbox" name="option3" value="a3" onClick={()=>HomeComponent.addParam('tele')}/>Телефонне<br />
-                    <input class ='VolonterType' type="checkbox" name="option4" value="a4" onClick={()=>HomeComponent.addParam('inte')}/>Інтелектуальне<br/>
-                    <input class ='VolonterType' type="checkbox" name="option5" value="a5" onClick={()=>HomeComponent.addParam('scho')}/>Шкільне<br/>
-                    <input class ='VolonterType' type="checkbox" name="option6" value="a6" onClick={()=>HomeComponent.addParam('home')}/>Допомога бездомним<br/>
-                    <input class ='VolonterType' type="checkbox" name="option7" value="a7" onClick={()=>HomeComponent.addParam('poor')}/>Допомога бідним<br/>
-                    <input class ='VolonterType' type="checkbox" name="option8" value="a8" onClick={()=>HomeComponent.addParam('inc')}/>Інклюзивне<br/>
-                    <input class ='VolonterType' type="checkbox" name="option9" value="a9" onClick={()=>HomeComponent.addParam('cult')}/>Культурне<br/>
-                    <input class ='VolonterType' type="checkbox" name="option10" value="a10" onClick={()=>HomeComponent.addParam('med')}/>Лікарняне</p>
-                <p><input class ='VolonterTypeSubmit' type="submit" value="Вибрати" onClick={()=>HomeComponent.handeleClick()}/></p>
+                <div className="ml-3"><b>Види волонтерства</b></div>
+                <div>
+                    <input className ='VolunteerType' type="checkbox" name="option1" value="a1" onClick={()=>HomeComponent.addParam('zoo')}/>Зоо<br />
+                    <input className ='VolunteerType' type="checkbox" name="option2" value="a2" onClick={()=>HomeComponent.addParam('eco')}/>Еко<br />
+                    <input className ='VolunteerType' type="checkbox" name="option3" value="a3" onClick={()=>HomeComponent.addParam('tele')}/>Телефонне<br />
+                    <input className ='VolunteerType' type="checkbox" name="option4" value="a4" onClick={()=>HomeComponent.addParam('inte')}/>Інтелектуальне<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option5" value="a5" onClick={()=>HomeComponent.addParam('scho')}/>Шкільне<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option6" value="a6" onClick={()=>HomeComponent.addParam('home')}/>Допомога бездомним<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option7" value="a7" onClick={()=>HomeComponent.addParam('poor')}/>Допомога бідним<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option8" value="a8" onClick={()=>HomeComponent.addParam('inc')}/>Інклюзивне<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option9" value="a9" onClick={()=>HomeComponent.addParam('cult')}/>Культурне<br/>
+                    <input className ='VolunteerType' type="checkbox" name="option10" value="a10" onClick={()=>HomeComponent.addParam('med')}/>Лікарняне
+                </div>
+                <div>
+                    <button className ='VolunteerTypeSubmit' type="submit" value="Choose" onClick={()=>HomeComponent.handeleClick()}>
+                        Вибрати
+                    </button>
+                </div>
             </form>
             < HomeComponent/>
         </div>
@@ -302,13 +318,15 @@ class Login extends React.Component{
             json[key] = value;
         });
 
-        fetch('https://127.0.0.1:5001/api/User/login', {
+        fetch(`${config.api}/api/User/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(json),
-        });
+            body: JSON.stringify(json)
+        })
+            .then(res => res.json())
+            .then(res => localStorage.setItem('token', res.token))
     }
     render() {
         return(
@@ -321,7 +339,7 @@ class Login extends React.Component{
                     </div>
                     <div>
                         <p>Password</p>
-                        <input type="password" name="Password"/>
+                        <input type="password" name="password"/>
                     </div>
                     <button value="Увійти">Увійти</button>
                 </form>
@@ -351,7 +369,7 @@ class Register extends React.Component {
             json[key] = value;
         });
 
-        fetch('https://127.0.0.1:5001/api/User/register', {
+        fetch(`${config.api}/api/User/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

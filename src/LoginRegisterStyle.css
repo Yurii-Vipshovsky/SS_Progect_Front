@@ -8,6 +8,10 @@ a:hover{
   text-decoration: none;
 }
 
+button{
+    cursor: pointer;
+}
+
 main{
   display: grid;
   text-align: center;

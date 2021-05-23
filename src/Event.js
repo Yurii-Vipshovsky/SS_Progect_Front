@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Event = props => {
+const EventItem = props => {
     const { name, place, description, date, type} = props.eventInfo || {};
 
     return (
@@ -19,7 +19,7 @@ const Event = props => {
     )
 }
 
-Event.propTypes = {
+EventItem.propTypes = {
     info: PropTypes.shape({
         name: PropTypes.string.isRequired,
         place: PropTypes.string.isRequired,
@@ -29,4 +29,4 @@ Event.propTypes = {
     })
 };
 
-export default Event;
+export default EventItem;
