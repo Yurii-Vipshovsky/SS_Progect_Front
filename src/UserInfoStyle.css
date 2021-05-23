@@ -1,0 +1,12 @@
+main{
+  display: grid;
+  text-align: center;
+  margin-top: 20px;
+}
+div p{
+	font-size: 40px;
+}
+div{
+	font-size: 40px;
+	margin-bottom: 10px;
+}

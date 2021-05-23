@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-
+main {
+	color: #F0F0D8;
+}
+div{
+	color: #F0F0D8;
+}
 html {
   color: #F0F0D8;
   font-family: sans-serif;

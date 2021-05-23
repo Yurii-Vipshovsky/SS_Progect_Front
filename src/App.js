@@ -1,6 +1,6 @@
+import './App.scss';
 import './LoginRegisterStyle.css';
 import './HomeStyle.css';
-import './App.scss';
 import history from './history';
 import Pagination from './Pagination'
 import EventItem from './Event'
@@ -191,16 +191,18 @@ class UserPage extends React.Component {
             return <div>Завантаження...</div>;
         } else {
             return (
-                <div key={item.id}>
-                    <div>
-                        <div>{item.login}</div>
-                        <div>{item.email}</div>
-                        <div>{item.name}</div>
-                        <div>{item.birthday}</div>
-                        <div>{item.sity}</div>
-                        <div>{item.phoneNumber}</div>
+                <main>
+                    <div key={item.id}>
+                        <div>
+                            <div><p>Логін : </p>{item.login}</div>
+                            <div><p>Email : </p>{item.email}</div>
+                            <div><p>Ім'я : </p>{item.name}</div>
+                            <div><p>День народження : </p>{item.birthday}</div>
+                            <div><p>Місто : </p>{item.sity}</div>
+                            <div><p>Номер телефону : </p>{item.phoneNumber}</div>
+                        </div>
                     </div>
-                </div>
+                </main>
             );
         }
     }
