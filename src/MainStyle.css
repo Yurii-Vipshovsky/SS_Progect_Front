@@ -2,6 +2,21 @@
 main {
 	color: #F0F0D8;
 }
+footer img{
+	height: 60px;
+	width: 60px;
+	border: none;
+}
+
+footer p{
+    height: 3em;
+    line-height: 3em;
+}
+footer a{
+	float: right;
+	margin-top: -5em;
+}
+
 div{
 	color: #F0F0D8;
 }

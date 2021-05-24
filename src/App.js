@@ -45,7 +45,10 @@ export default function App() {
             </Switch>
 
             <footer>
-                <p>© 2021 Команда SS</p>
+                <p style={{'font-size': '24px'}}>© 2021 Команда SS</p>
+                <a href="https://t.me/volunteering_ua_bot"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Telegram_Messenger.png/768px-Telegram_Messenger.png" 
+                     alt="TelegramBot"/></a>
+                
             </footer>
         </Router>
     );
