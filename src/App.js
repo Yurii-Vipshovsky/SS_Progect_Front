@@ -5,26 +5,42 @@ import history from './history';
 import Pagination from './Pagination'
 import EventItem from './Event'
 import React from "react";
-import {BrowserRouter as Router, Link, Route, Switch,} from "react-router-dom";
+import { useAlert } from 'react-alert';
+import Alert from 'react-bootstrap/Alert';
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import config from './config'
 
 
 export default function App() {
     return (
         <Router>
-            <header>
-                <div className="Login">
-                    <div id="Login">
-                        <Link to="/login"><h4>Вхід</h4></Link>
-                        <Link to="/userpage"><h4>Особистий кабінет</h4></Link>
-                    </div>
-                    <div id="Register">
-                        <Link to="/regiser"><h4>Реєстрація</h4></Link>
-                        <Link to="/NewEvent"><h4>Реєстрація Події</h4></Link>
-                    </div>
-                </div>
-                <Link to="/"><h1 className="title" >Твори Добро Бро!</h1></Link>
-            </header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="https://volunteer.country/"><img style={{'width': '180px'}} src = "https://static.tildacdn.com/tild3163-3035-4730-b266-663030653566/__white.png"/></a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                    <Link to="/" style={{'font-size': '24px'}} class="nav-link">Домашня Сторінка <span class="sr-only">(current)</span></Link>
+                  </li>
+                  <li class="nav-item">
+                    <Link to="/NewEvent" style={{'font-size': '24px'}} class="nav-link" >Нова Подія</Link>
+                  </li>
+                  <li class="nav-item">
+                    <Link to="/userpage" style={{'font-size': '24px'}} class="nav-link" >Особистий кабінет</Link>
+                  </li>
+                  <li class="nav-item">
+                    <Link to="/login" style={{'font-size': '24px'}} class="nav-link" >Вхід</Link>
+                  </li>
+                  <li class="nav-item">
+                    <Link to="/regiser" style={{'font-size': '24px'}} class="nav-link" >Реєстрація</Link>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+            
 
             <Switch>
                 <Route path="/login">
@@ -211,9 +227,16 @@ class UserPage extends React.Component {
     }
 }
 
+
+
+
 class NewEvent extends React.Component {
     constructor() {
         super();
+        this.state = {
+            showSuccessAlert: false,
+            showFailAlert: false
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -235,12 +258,27 @@ class NewEvent extends React.Component {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(json),
-        });
+        }).then(res => res.json())
+            .then(
+                (result)=>{
+                    this.setState({
+                         showSuccessAlert: true
+                    });
+                },
+                (error)=>{
+                    this.setState({
+                        showFailAlert: true
+                    });
+                }
+            )
+
+
     }
 
     render() {
         return(
-            <main>
+        <main>
+                      
                 <form onSubmit={this.handleSubmit}>
                     <p styles={{fontSize: '40px'}}>Реєстрація Події</p>
                     <div>
@@ -277,6 +315,16 @@ class NewEvent extends React.Component {
                     </div>
                     <button>Зареєструвати</button>
                 </form>
+            <div>
+                { this.state.showSuccessAlert && <Alert variant="warning">
+                 Подія Зареєстрована!
+                </Alert> }
+
+                { this.state.showFailAlert && <Alert variant="warning">
+                 Невдалось Зареєструвати Подію!
+                </Alert> }
+
+            </div>
             </main>);
     }
 }
@@ -312,6 +360,10 @@ function Home() {
 class Login extends React.Component{
     constructor() {
         super();
+        this.state = {
+            showSuccessAlert: false,
+            showFailAlert: false
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -332,6 +384,18 @@ class Login extends React.Component{
         })
             .then(res => res.json())
             .then(res => localStorage.setItem('token', res.token))
+            .then(
+                (result)=>{
+                    this.setState({
+                         showSuccessAlert: true
+                    });
+                },
+                (error)=>{
+                    this.setState({
+                        showFailAlert: true
+                    });
+                }
+            )
     }
     render() {
         return(
@@ -348,6 +412,17 @@ class Login extends React.Component{
                     </div>
                     <button value="Увійти">Увійти</button>
                 </form>
+
+            <div>
+                { this.state.showSuccessAlert && <Alert variant="warning">
+                 Вхід Успішний!
+                </Alert> }
+
+                { this.state.showFailAlert && <Alert variant="warning">
+                 Невдалось Увійти!
+                </Alert> }
+
+            </div>
             </main>);
     }
 }
@@ -355,7 +430,10 @@ class Login extends React.Component{
 class Register extends React.Component {
     constructor() {
         super();
-
+        this.state = {
+            showSuccessAlert: false,
+            showFailAlert: false
+        };
         this.state = { checked: false };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -380,7 +458,20 @@ class Register extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(json),
-        });
+        }).then(res => res.json())
+            .then(res => localStorage.setItem('token', res.token))
+            .then(
+                (result)=>{
+                    this.setState({
+                         showSuccessAlert: true
+                    });
+                },
+                (error)=>{
+                    this.setState({
+                        showFailAlert: true
+                    });
+                }
+            )
     }
 
     render() {
@@ -435,6 +526,16 @@ class Register extends React.Component {
                     <button value="Зареєструватись">Зареєструватись</button>
                 </form>
 
+            <div>
+                { this.state.showSuccessAlert && <Alert variant="warning">
+                 Ви Успішно Зареєстровані!
+                </Alert> }
+
+                { this.state.showFailAlert && <Alert variant="warning">
+                 Невдалось Зареєструвати!
+                </Alert> }
+
+            </div>
             </main></>;
     }
 }
